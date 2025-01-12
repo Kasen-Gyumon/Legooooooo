@@ -218,9 +218,20 @@ class BlockGameApp:
         self.root.after(10, self.update_frame)
 
     def on_close(self):
+        # リソース解放
         self.capture.release()
-        self.root.destroy()
 
+        # captured_image_0.jpg と captured_image_1.jpg を削除
+        for i in range(2):
+            filename = f"captured_image_{i}.jpg"
+            if os.path.exists(filename):
+                try:
+                    os.remove(filename)
+                    print(f"Deleted: {filename}")
+                except Exception as e:
+                    print(f"Error deleting {filename}: {e}")
+
+        self.root.destroy()
 # Main loop
 root = tk.Tk()
 app = BlockGameApp(root)
