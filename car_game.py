@@ -55,6 +55,9 @@ class BlockGameApp:
         self.update_frame()
 
     def draw_main_screen(self):
+
+        global tome_car, tome_home
+
         self.canvas.delete("all")
         self.current_screen = "main"
 
@@ -67,10 +70,10 @@ class BlockGameApp:
         self.canvas.create_text(400, 70, text="自分が作ったもので街を完成させよう！", font=font_subject, fill="black")
 
         # Buttons
-        self.canvas.create_rectangle(270, 90, 570, 440, fill="#ADD8E6", stipple="gray75", outline="black", tags="house")
+        self.canvas.create_rectangle(270, 90, 570, 440, fill="#ADD8E6", stipple=tome_home, outline="black", tags="house")
         self.canvas.create_text(415, 290, text="🏠️家", font=font_title, fill="black")
 
-        self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", stipple="gray75", outline="black", tags="cars")
+        self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", stipple=tome_car, outline="black", tags="cars")
         self.canvas.create_text(360, 495, text="🚗車", font=font_title, fill="black")
 
         # Display captured images
@@ -109,6 +112,7 @@ class BlockGameApp:
         # Sample image
         if self.blocknumber == 0:
             self.sample_image_path = "image/house.png"
+
         elif self.blocknumber == 1:
             self.sample_image_path = "image/car.png"
 
@@ -157,6 +161,7 @@ class BlockGameApp:
                 self.draw_main_screen()  # メインページに戻る
 
     def capture_shutter(self):
+        global tome_home, tome_car
         if self.last_frame is not None:
             filename = f"captured_image_{self.blocknumber}.jpg"
             cv2.imwrite(filename, self.last_frame)
@@ -185,6 +190,13 @@ class BlockGameApp:
                     if (self.blocknumber == 0 and object_type != "house") or \
                     (self.blocknumber == 1 and object_type != "cars"):
                         continue  # 対応しない場合はスキップ
+
+                    #ボタンの透過度を変更
+                    if (self.blocknumber == 0 and object_type == "house"):
+                        tome_home ="gray25"
+
+                    if (self.blocknumber == 1 and object_type == "car"):
+                        tome_car ="gray25"
 
                     detected = True  # 検出成功
 
@@ -249,6 +261,8 @@ root = tk.Tk()
 # tkinter用のフォントを指定
 font_title = font.Font(family="ＭＳ ゴシック", size=50)
 font_subject = font.Font(family="ＭＳ ゴシック", size=20)
+tome_home ="gray75"
+tome_car ="gray75"
 
 app = BlockGameApp(root)
 root.protocol("WM_DELETE_WINDOW", app.on_close)
