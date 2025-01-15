@@ -63,15 +63,15 @@ class BlockGameApp:
             self.canvas.create_image(0, 0, anchor=tk.NW, image=self.bg_tk)
 
         # Text
-        self.canvas.create_text(400, 50, text="Lego Game", font=("Helvetica", 24), fill="black")
-        self.canvas.create_text(400, 100, text="作りたいものをクリックしてください", font=font_subject, fill="black")
+        self.canvas.create_text(400, 30, text="Lego Game", font=("Helvetica", 24), fill="black")
+        self.canvas.create_text(400, 70, text="作りたいものをクリックしてください", font=font_subject, fill="black")
 
         # Buttons
-        self.canvas.create_rectangle(200, 200, 400, 250, fill="lightblue", outline="black", tags="house")
-        self.canvas.create_text(300, 225, text="家", font=font_subject, fill="black")
+        self.canvas.create_rectangle(270, 100, 570, 440, fill="lightblue", outline="black", tags="house")
+        self.canvas.create_text(415, 290, text="家", font=font_title, fill="black")
 
-        self.canvas.create_rectangle(200, 300, 400, 350, fill="lightgreen", outline="black", tags="cars")
-        self.canvas.create_text(300, 325, text="車", font=font_subject, fill="black")
+        self.canvas.create_rectangle(240, 440, 500, 560, fill="lightgreen", outline="black", tags="cars")
+        self.canvas.create_text(360, 495, text="車", font=font_title, fill="black")
 
         # Display captured images
         if self.captured_images["house"]:
@@ -131,10 +131,10 @@ class BlockGameApp:
         x, y = event.x, event.y
 
         if self.current_screen == "main":
-            if 200 <= x <= 400 and 200 <= y <= 250:
+            if 270 <= x <= 570 and 100 <= y <= 440:
                 self.blocknumber = 0
                 self.draw_next_screen()
-            elif 200 <= x <= 400 and 300 <= y <= 350:
+            elif 240 <= x <= 500 and 440 <= y <= 560:
                 self.blocknumber = 1
                 self.draw_next_screen()
 
@@ -236,6 +236,7 @@ class BlockGameApp:
 root = tk.Tk()
 
 # tkinter用のフォントを指定
+font_title = font.Font(family="ＭＳ ゴシック", size=50)
 font_subject = font.Font(family="ＭＳ ゴシック", size=20)
 
 app = BlockGameApp(root)
