@@ -92,6 +92,9 @@ class BlockGameApp:
         self.canvas.delete("all")
         self.current_screen = "next"
 
+        # Background color for next screen
+        self.canvas.create_rectangle(0, 0, 800, 600, fill="lightgreen", outline="")
+
         # Display camera feed on the right
         if self.last_frame is not None:
             frame_rgb = cv2.cvtColor(self.last_frame, cv2.COLOR_BGR2RGB)
@@ -103,16 +106,23 @@ class BlockGameApp:
 
         # Sample image
         if self.blocknumber == 0:
-            self.sample_image_path = "image/house.jpg"
+            self.sample_image_path = "image/house.png"
         elif self.blocknumber == 1:
-            self.sample_image_path = "image/car.jpg"
+            self.sample_image_path = "image/car.png"
 
         try:
             sample_image = Image.open(self.sample_image_path)
-            sample_image.thumbnail((300, 300))
+            sample_image.thumbnail((200, 200))
+
+            # Create frame around the sample image
+            x1, y1, x2, y2 = 150, 100, 350, 300
+            self.canvas.create_rectangle(x1, y1, x2, y2, fill="white", outline="black", width=4)
+
+            # Place the sample image within the frame
             sample_tk = ImageTk.PhotoImage(sample_image)
-            self.canvas.create_image(250, 200, anchor=tk.CENTER, image=sample_tk)
+            self.canvas.create_image((x1 + x2) // 2, (y1 + y2) // 2, anchor=tk.CENTER, image=sample_tk)
             self.sample_image_tk = sample_tk  # Keep reference
+
         except Exception as e:
             print(f"Sample image error: {e}")
 
@@ -143,7 +153,6 @@ class BlockGameApp:
                 self.capture_shutter()
             elif 50 <= x <= 200 and 500 <= y <= 550:
                 self.draw_main_screen()  # メインページに戻る
-
 
     def capture_shutter(self):
         if self.last_frame is not None:
