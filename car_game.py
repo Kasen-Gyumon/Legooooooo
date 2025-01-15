@@ -195,9 +195,9 @@ class BlockGameApp:
                 if detected:
                     self.draw_main_screen()
                 else:
-                    self.canvas.itemconfig(self.message_id, text="Please capture a valid object!")
+                    self.canvas.itemconfig(self.message_id, text="指定されたものを作ってください！")
             else:
-                self.canvas.itemconfig(self.message_id, text="No objects detected!")
+                self.canvas.itemconfig(self.message_id, text="物体が検知されません！")
 
     def update_frame(self):
         if self.capture.isOpened():
