@@ -68,10 +68,10 @@ class BlockGameApp:
 
         # Buttons
         self.canvas.create_rectangle(270, 100, 570, 440, fill="lightblue", outline="black", tags="house")
-        self.canvas.create_text(415, 290, text="家", font=font_title, fill="black")
+        self.canvas.create_text(415, 290, text="🏠️家", font=font_title, fill="black")
 
         self.canvas.create_rectangle(240, 440, 500, 560, fill="lightgreen", outline="black", tags="cars")
-        self.canvas.create_text(360, 495, text="車", font=font_title, fill="black")
+        self.canvas.create_text(360, 495, text="🚗車", font=font_title, fill="black")
 
         # Display captured images
         if self.captured_images["house"]:
