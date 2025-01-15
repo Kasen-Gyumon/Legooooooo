@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import messagebox
-from PIL import Image, ImageTk
+from tkinter import messagebox, font
+from PIL import Image, ImageTk, ImageFont
 import cv2
 import numpy as np
 import os
@@ -64,14 +64,14 @@ class BlockGameApp:
 
         # Text
         self.canvas.create_text(400, 50, text="Lego Game", font=("Helvetica", 24), fill="black")
-        self.canvas.create_text(400, 100, text="Click on what you want to build", font=("Helvetica", 16), fill="black")
+        self.canvas.create_text(400, 100, text="作りたいものをクリックしてください", font=font_subject, fill="black")
 
         # Buttons
         self.canvas.create_rectangle(200, 200, 400, 250, fill="lightblue", outline="black", tags="house")
-        self.canvas.create_text(300, 225, text="House", font=("Helvetica", 18), fill="black")
+        self.canvas.create_text(300, 225, text="家", font=font_subject, fill="black")
 
         self.canvas.create_rectangle(200, 300, 400, 350, fill="lightgreen", outline="black", tags="cars")
-        self.canvas.create_text(300, 325, text="cars", font=("Helvetica", 18), fill="black")
+        self.canvas.create_text(300, 325, text="車", font=font_subject, fill="black")
 
         # Display captured images
         if self.captured_images["house"]:
@@ -118,11 +118,11 @@ class BlockGameApp:
 
         # Shutter button
         self.canvas.create_rectangle(300, 400, 500, 450, fill="red", outline="black", tags="shutter")
-        self.canvas.create_text(400, 425, text="Capture", font=("Helvetica", 18), fill="white")
+        self.canvas.create_text(400, 425, text="撮影", font=font_subject, fill="white")
 
         # Back to main button (left bottom)
-        self.canvas.create_rectangle(50, 500, 200, 550, fill="blue", outline="black", tags="back_to_main")
-        self.canvas.create_text(125, 525, text="Back to Main", font=("Helvetica", 14), fill="white")
+        self.canvas.create_rectangle(10, 500, 250, 550, fill="blue", outline="black", tags="back_to_main")
+        self.canvas.create_text(125, 525, text="メイン画面に戻る", font=font_subject, fill="white")
 
         # Message area
         self.message_id = self.canvas.create_text(400, 500, text="", font=("Helvetica", 14), fill="red")
@@ -234,6 +234,10 @@ class BlockGameApp:
         self.root.destroy()
 # Main loop
 root = tk.Tk()
+
+# tkinter用のフォントを指定
+font_subject = font.Font(family="ＭＳ ゴシック", size=20)
+
 app = BlockGameApp(root)
 root.protocol("WM_DELETE_WINDOW", app.on_close)
 root.mainloop()
