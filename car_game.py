@@ -64,13 +64,13 @@ class BlockGameApp:
 
         # Text
         self.canvas.create_text(400, 30, text="Lego Game", font=("Helvetica", 24), fill="black")
-        self.canvas.create_text(400, 70, text="作りたいものをクリックしてください", font=font_subject, fill="black")
+        self.canvas.create_text(400, 70, text="自分が作ったもので街を完成させよう！", font=font_subject, fill="black")
 
         # Buttons
-        self.canvas.create_rectangle(270, 100, 570, 440, fill="#ADD8E6", stipple="gray50", outline="black", tags="house")
+        self.canvas.create_rectangle(270, 90, 570, 440, fill="#ADD8E6", stipple="gray75", outline="black", tags="house")
         self.canvas.create_text(415, 290, text="🏠️家", font=font_title, fill="black")
 
-        self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", stipple="gray50", outline="black", tags="cars")
+        self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", stipple="gray75", outline="black", tags="cars")
         self.canvas.create_text(360, 495, text="🚗車", font=font_title, fill="black")
 
         # Display captured images
@@ -94,6 +94,8 @@ class BlockGameApp:
 
         # Background color for next screen
         self.canvas.create_rectangle(0, 0, 800, 600, fill="lightgreen", outline="")
+
+        self.canvas.create_text(400, 70, text="左の画像と同じものをつくってね", font=font_subject, fill="black")
 
         # Display camera feed on the right
         if self.last_frame is not None:
@@ -141,7 +143,7 @@ class BlockGameApp:
         x, y = event.x, event.y
 
         if self.current_screen == "main":
-            if 270 <= x <= 570 and 100 <= y <= 440:
+            if 270 <= x <= 570 and 90 <= y <= 440:
                 self.blocknumber = 0
                 self.draw_next_screen()
             elif 240 <= x <= 500 and 440 <= y <= 560:
