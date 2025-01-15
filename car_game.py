@@ -99,6 +99,7 @@ class BlockGameApp:
         self.canvas.create_rectangle(0, 0, 800, 600, fill="lightgreen", outline="")
 
         self.canvas.create_text(400, 30, text="左の画像と同じものをつくってね", font=font_subject, fill="black")
+        self.canvas.create_text(150, 80, text="横向きにとってね！", font=font_subject, fill="black")
 
         # Display camera feed on the right
         if self.last_frame is not None:
