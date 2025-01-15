@@ -76,16 +76,16 @@ class BlockGameApp:
         # Display captured images
         if self.captured_images["house"]:
             house_image = Image.open(self.captured_images["house"])
-            house_image.thumbnail((50, 50))
+            house_image.thumbnail((100, 330))
             house_tk = ImageTk.PhotoImage(house_image)
-            self.canvas.create_image(420, 225, anchor=tk.CENTER, image=house_tk)
+            self.canvas.create_image(415, 440, anchor=tk.CENTER, image=house_tk)
             self.house_image_tk = house_tk  # Keep reference
 
         if self.captured_images["cars"]:
             cars_image = Image.open(self.captured_images["cars"])
-            cars_image.thumbnail((50, 50))
+            cars_image.thumbnail((60, 120))
             cars_tk = ImageTk.PhotoImage(cars_image)
-            self.canvas.create_image(420, 325, anchor=tk.CENTER, image=cars_tk)
+            self.canvas.create_image(360, 440, anchor=tk.CENTER, image=cars_tk)
             self.cars_image_tk = cars_tk  # Keep reference
 
     def draw_next_screen(self):
