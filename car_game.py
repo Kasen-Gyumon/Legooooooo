@@ -95,8 +95,15 @@ class BlockGameApp:
         self.canvas.delete("all")
         self.current_screen = "next"
 
-        # Background color for next screen
-        self.canvas.create_rectangle(0, 0, 800, 600, fill="lightgreen", outline="")
+        # 背景画像として Sam.jpg を表示
+        try:
+            bg_image = Image.open("sample.jpg")
+            bg_image = bg_image.resize((800, 600))  # キャンバスサイズに合わせてリサイズ
+            bg_tk = ImageTk.PhotoImage(bg_image)
+            self.canvas.create_image(0, 0, anchor=tk.NW, image=bg_tk)
+            self.bg_next_screen_tk = bg_tk  # 参照を保持
+        except Exception as e:
+            print(f"Error loading Sam.jpg: {e}")
 
         self.canvas.create_text(400, 30, text="左の画像と同じものをつくってね", font=font_subject, fill="black")
         self.canvas.create_text(150, 80, text="横向きにとってね！", font=font_subject, fill="black")
