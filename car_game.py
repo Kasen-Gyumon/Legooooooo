@@ -55,7 +55,6 @@ class BlockGameApp:
         self.update_frame()
 
     def draw_main_screen(self):
-
         global tome_car, tome_home
 
         self.canvas.delete("all")
@@ -69,27 +68,40 @@ class BlockGameApp:
         self.canvas.create_text(400, 30, text="Lego Game", font=("Helvetica", 24), fill="black")
         self.canvas.create_text(400, 70, text="自分が作ったもので街を完成させよう！", font=font_subject, fill="black")
 
-        # Buttons
-        self.canvas.create_rectangle(270, 90, 570, 440, fill="#ADD8E6", stipple=tome_home, outline="black", tags="house")
-        self.canvas.create_text(415, 290, text="🏠️家", font=font_title, fill="black")
-
-        self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", stipple=tome_car, outline="black", tags="cars")
-        self.canvas.create_text(360, 495, text="🚗車", font=font_title, fill="black")
-
-        # Display captured images
+        # Buttons and images
+        # House button
         if self.captured_images["house"]:
+            # Display captured house image
             house_image = Image.open(self.captured_images["house"])
-            house_image.thumbnail((100, 330))
+            house_image = house_image.resize((300, 350))  # Match button size
             house_tk = ImageTk.PhotoImage(house_image)
-            self.canvas.create_image(415, 440, anchor=tk.CENTER, image=house_tk)
+            self.canvas.create_image(420, 265, anchor=tk.CENTER, image=house_tk)
             self.house_image_tk = house_tk  # Keep reference
 
+            # Transparent button overlay
+            self.canvas.create_rectangle(270, 90, 570, 440, fill="", outline="", tags="house")
+
+        else:
+            # Draw house button (visible if no image yet)
+            self.canvas.create_rectangle(270, 90, 570, 440, fill="#ADD8E6", outline="black", tags="house")
+            self.canvas.create_text(415, 290, text="🏠️家", font=font_title, fill="black")
+
+        # Car button
         if self.captured_images["cars"]:
+            # Display captured car image
             cars_image = Image.open(self.captured_images["cars"])
-            cars_image.thumbnail((60, 120))
+            cars_image = cars_image.resize((260, 120))  # Match button size
             cars_tk = ImageTk.PhotoImage(cars_image)
-            self.canvas.create_image(360, 440, anchor=tk.CENTER, image=cars_tk)
+            self.canvas.create_image(370, 500, anchor=tk.CENTER, image=cars_tk)
             self.cars_image_tk = cars_tk  # Keep reference
+
+            # Transparent button overlay
+            self.canvas.create_rectangle(240, 440, 500, 560, fill="", outline="", tags="cars")
+
+        else:
+            # Draw car button (visible if no image yet)
+            self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", outline="black", tags="cars")
+            self.canvas.create_text(360, 495, text="🚗車", font=font_title, fill="black")
 
     def draw_next_screen(self):
         self.canvas.delete("all")
@@ -120,13 +132,17 @@ class BlockGameApp:
         # Sample image
         if self.blocknumber == 0:
             self.sample_image_path = "image/house.png"
+            imageSizeX = 300 
+            imageSizeY = 300
 
         elif self.blocknumber == 1:
             self.sample_image_path = "image/car.png"
+            imageSizeX = 400 
+            imageSizeY = 400
 
         try:
             sample_image = Image.open(self.sample_image_path)
-            sample_image.thumbnail((200, 200))
+            sample_image.thumbnail((imageSizeX,imageSizeY))
 
             # Create frame around the sample image
             x1, y1, x2, y2 = 150, 100, 350, 300
