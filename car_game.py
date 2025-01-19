@@ -87,7 +87,7 @@ class BlockGameApp:
 
         # Text
         self.canvas.create_text(400, 30, text="Legoooooo", font=("Helvetica", 24), fill="black")
-        self.canvas.create_text(400, 70, text="自分が作ったもので街を完成させよう！", font=font_subject, fill="black")
+        self.canvas.create_text(420, 70, text="まちをかんせいさせよう！", font=font_subject, fill="black")
 
         # Buttons and images
         # House button
@@ -105,7 +105,7 @@ class BlockGameApp:
         else:
             # Draw house button (visible if no image yet)
             self.canvas.create_rectangle(270, 90, 570, 440, fill="#ADD8E6", outline="black", stipple="gray50", tags="house")
-            self.canvas.create_text(415, 290, text="🏠️家", font=font_title, fill="black")
+            self.canvas.create_text(415, 290, text="🏠️おうち", font=font_title2, fill="black")
 
         # Car button
         if self.captured_images["cars"]:
@@ -122,7 +122,7 @@ class BlockGameApp:
         else:
             # Draw car button (visible if no image yet)
             self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", outline="black", stipple="gray50", tags="cars")
-            self.canvas.create_text(360, 495, text="🚗車", font=font_title, fill="black")
+            self.canvas.create_text(360, 495, text="🚗くるま", font=font_title2, fill="black")
 
     def draw_next_screen(self):
         self.canvas.delete("all")
@@ -137,9 +137,11 @@ class BlockGameApp:
             self.bg_next_screen_tk = bg_tk  # 参照を保持
         except Exception as e:
             print(f"Error loading Sam.jpg: {e}")
-        self.canvas.create_text(400, 30, text="左の画像と同じものをつくってね", font=font_subject, fill="black")
-        if self.blocknumber == 1:
-            self.canvas.create_text(150, 80, text="横向きにとってね！", font=font_subject, fill="black")
+        self.canvas.create_text(400, 30, text="左のおてほんと同じものをつくってね", font=font_subject, fill="black")
+        if self.blocknumber == 0:
+            self.canvas.create_text(240, 80, text="まえからとってね！", font=font_subject, fill="black")
+        elif self.blocknumber == 1:
+            self.canvas.create_text(240, 80, text="よこむきにとってね！", font=font_subject, fill="black")
 
         # Display camera feed on the right
         if self.last_frame is not None:
@@ -179,11 +181,11 @@ class BlockGameApp:
 
         # Shutter button
         self.canvas.create_rectangle(300, 400, 500, 450, fill="red", outline="black", tags="shutter")
-        self.canvas.create_text(400, 425, text="撮影", font=font_subject, fill="white")
+        self.canvas.create_text(400, 425, text="しゃしん", font=font_subject, fill="white")
 
         # Back to main button (left bottom)
         self.canvas.create_rectangle(10, 500, 250, 550, fill="blue", outline="black", tags="back_to_main")
-        self.canvas.create_text(125, 525, text="メイン画面に戻る", font=font_subject, fill="white")
+        self.canvas.create_text(125, 525, text="さいしょにもどる", font=font_subject, fill="white")
 
         # Message area
         self.message_id = self.canvas.create_text(400, 500, text="", font=("Helvetica", 14), fill="red")
@@ -220,6 +222,7 @@ class BlockGameApp:
 
             if results and len(results[0].boxes) > 0:
                 detected = False  # 検出結果の確認用
+                self.canvas.itemconfig(self.message_id, text="すこしまってね")
 
                 for i, box in enumerate(results[0].boxes.xyxy):
                     confidence = results[0].boxes.conf[i]  # 信頼値を取得
@@ -246,6 +249,7 @@ class BlockGameApp:
                     detected = True  # 検出成功
 
                     # 検出されたオブジェクトを切り抜き
+                    
                     cropped = Image.open(filename).crop((x1, y1, x2, y2))
 
                     # 背景を削除
@@ -262,10 +266,10 @@ class BlockGameApp:
 
                 if detected:
                     self.draw_main_screen()
-                else:
-                    self.canvas.itemconfig(self.message_id, text="指定されたものを作ってください！")
-            else:
-                self.canvas.itemconfig(self.message_id, text="物体が検知されません！")
+                else:#物体は検知されているが、対象の物体がないor精度が低すぎる
+                    self.canvas.itemconfig(self.message_id, text="あとちょっと！")
+            else:#そもそも物体がない
+                self.canvas.itemconfig(self.message_id, text="みつからないよ～")
 
     def update_frame(self):
         if self.capture.isOpened():
@@ -305,6 +309,7 @@ root = tk.Tk()
 
 # tkinter用のフォントを指定
 font_title = font.Font(family="ＭＳ ゴシック", size=50)
+font_title2 = font.Font(family="ＭＳ ゴシック", size=30)
 font_subject = font.Font(family="ＭＳ ゴシック", size=20)
 tome_home ="gray75"
 tome_car ="gray75"
