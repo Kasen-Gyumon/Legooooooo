@@ -86,7 +86,7 @@ class BlockGameApp:
             self.canvas.create_image(0, 0, anchor=tk.NW, image=self.bg_tk)
 
         # Text
-        self.canvas.create_text(400, 30, text="Lego Game", font=("Helvetica", 24), fill="black")
+        self.canvas.create_text(400, 30, text="Legoooooo", font=("Helvetica", 24), fill="black")
         self.canvas.create_text(400, 70, text="自分が作ったもので街を完成させよう！", font=font_subject, fill="black")
 
         # Buttons and images
@@ -137,9 +137,9 @@ class BlockGameApp:
             self.bg_next_screen_tk = bg_tk  # 参照を保持
         except Exception as e:
             print(f"Error loading Sam.jpg: {e}")
-
         self.canvas.create_text(400, 30, text="左の画像と同じものをつくってね", font=font_subject, fill="black")
-        self.canvas.create_text(150, 80, text="横向きにとってね！", font=font_subject, fill="black")
+        if self.blocknumber == 1:
+            self.canvas.create_text(150, 80, text="横向きにとってね！", font=font_subject, fill="black")
 
         # Display camera feed on the right
         if self.last_frame is not None:
@@ -193,10 +193,10 @@ class BlockGameApp:
 
         if self.current_screen == "main":
             if 270 <= x <= 570 and 90 <= y <= 440:
-                self.blocknumber = 0
+                self.blocknumber = 0#house選択
                 self.draw_next_screen()
             elif 240 <= x <= 500 and 440 <= y <= 560:
-                self.blocknumber = 1
+                self.blocknumber = 1#car選択
                 self.draw_next_screen()
 
         elif self.current_screen == "next":
