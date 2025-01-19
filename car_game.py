@@ -54,9 +54,30 @@ class BlockGameApp:
         # Frame update
         self.update_frame()
 
+    def update_background_image(self):
+    
+        if self.captured_images["house"] and self.captured_images["cars"]:
+            background_path = "image/house_car_less.jpg"
+        elif self.captured_images["house"]:
+            background_path = "image/house_less.jpg"
+        elif self.captured_images["cars"]:
+            background_path = "image/car_less.jpg"
+        else:
+            background_path = "image/town.jpg"  # 初期背景
+
+        try:
+            new_bg_image = Image.open(background_path)
+            new_bg_image = new_bg_image.resize((800, 600))
+            self.bg_tk = ImageTk.PhotoImage(new_bg_image)
+        except Exception as e:
+            print(f"Error updating background image: {e}")
+            self.bg_tk = None
+
+
     def draw_main_screen(self):
         global tome_car, tome_home
 
+        self.update_background_image()
         self.canvas.delete("all")
         self.current_screen = "main"
 
@@ -83,7 +104,7 @@ class BlockGameApp:
 
         else:
             # Draw house button (visible if no image yet)
-            self.canvas.create_rectangle(270, 90, 570, 440, fill="#ADD8E6", outline="black", tags="house")
+            self.canvas.create_rectangle(270, 90, 570, 440, fill="#ADD8E6", outline="black", stipple="gray50", tags="house")
             self.canvas.create_text(415, 290, text="🏠️家", font=font_title, fill="black")
 
         # Car button
@@ -100,7 +121,7 @@ class BlockGameApp:
 
         else:
             # Draw car button (visible if no image yet)
-            self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", outline="black", tags="cars")
+            self.canvas.create_rectangle(240, 440, 500, 560, fill="#90EE90", outline="black", stipple="gray50", tags="cars")
             self.canvas.create_text(360, 495, text="🚗車", font=font_title, fill="black")
 
     def draw_next_screen(self):
