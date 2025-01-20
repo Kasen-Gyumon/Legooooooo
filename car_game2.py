@@ -253,3 +253,51 @@ font_subject = font.Font(family="ＭＳ ゴシック", size=20)
 app = BlockGameApp(root)
 root.protocol("WM_DELETE_WINDOW", app.on_close)
 root.mainloop()
+   from PIL import Image
+
+    def trim_transparent_area(input_path, output_path):
+        """
+        PNG画像の透過部分をトリミングし、物体ができるだけ大きくなるようにトリミングします。
+        物体の形に合わせた矩形サイズで保存します。
+
+        Args:
+            input_path (str): トリミング対象の画像パス。
+            output_path (str): トリミング後の画像を保存するパス。
+
+        Returns:
+            Image or None: トリミング後の画像（成功した場合はImageオブジェクト、失敗した場合はNone）。
+        """
+        try:
+            # 入力画像を開く
+            img = Image.open(input_path).convert("RGBA")
+
+            # アルファチャンネルを使って非透過部分の範囲を取得
+            bbox = img.getbbox()
+
+            if bbox:
+                # 物体部分をトリミング
+                img_cropped = img.crop(bbox)
+                
+                # 保存
+                img_cropped.save(output_path, "PNG")
+                print(f"Trimmed image saved: {output_path}")
+                return img_cropped  # トリミング後の画像を返す
+            else:
+                print("No non-transparent pixels found in the image.")
+                return None
+
+        except Exception as e:
+            print(f"Error trimming transparent image: {e}")
+            return None
+
+            
+                    # トリミング後の画像パス
+                    trimmed_output_path = os.path.join(self.output_dir, f"trimmed_{object_type}_{i}.png")
+
+                    # 透過部分をトリミング
+                    if self.trim_transparent_area(output_path, trimmed_output_path):
+                        # トリミング後の画像パスを保存
+                        self.captured_images[object_type] = trimmed_output_path
+                    else:
+                        print(f"Trimming failed for {output_path}")
+

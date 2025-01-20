@@ -19,7 +19,7 @@ class BlockGameApp:
         self.last_frame = None
         self.frame_count = 0
         self.captured_images = {"house": None, "cars": None}  # Store captured images for house and cars
-        self.capture = cv2.VideoCapture(0)
+        self.capture = cv2.VideoCapture(1)
 
         if not self.capture.isOpened():
             messagebox.showerror("Error", "Cannot access the camera")
@@ -96,7 +96,7 @@ class BlockGameApp:
             house_image = Image.open(self.captured_images["house"])
             house_image = house_image.resize((300, 350))  # Match button size
             house_tk = ImageTk.PhotoImage(house_image)
-            self.canvas.create_image(420, 265, anchor=tk.CENTER, image=house_tk)
+            self.canvas.create_image(420, 265+30, anchor=tk.CENTER, image=house_tk)
             self.house_image_tk = house_tk  # Keep reference
 
             # Transparent button overlay
@@ -113,7 +113,7 @@ class BlockGameApp:
             cars_image = Image.open(self.captured_images["cars"])
             cars_image = cars_image.resize((260, 120))  # Match button size
             cars_tk = ImageTk.PhotoImage(cars_image)
-            self.canvas.create_image(370, 500, anchor=tk.CENTER, image=cars_tk)
+            self.canvas.create_image(370, 520, anchor=tk.CENTER, image=cars_tk)
             self.cars_image_tk = cars_tk  # Keep reference
 
             # Transparent button overlay
@@ -206,50 +206,53 @@ class BlockGameApp:
                 self.capture_shutter()
             elif 50 <= x <= 200 and 500 <= y <= 550:
                 self.draw_main_screen()  # メインページに戻る
-
+  
     def capture_shutter(self):
+        """
+        カメラからキャプチャした画像を保存し、物体検出を行い、
+        検出された物体の背景を削除して透過部分をトリミングします。
+        """
         global tome_home, tome_car
         if self.last_frame is not None:
+            # キャプチャした画像を保存
             filename = f"captured_image_{self.blocknumber}.jpg"
             cv2.imwrite(filename, self.last_frame)
             print(f"Image saved: {filename}")
 
-            # YOLOモデルの適用
+            # YOLOモデルを適用
             results = self.model(filename)
 
             # 信頼値のしきい値
-            confidence_threshold = 0.5  # ここでしきい値を設定
+            confidence_threshold = 0.3
 
             if results and len(results[0].boxes) > 0:
-                detected = False  # 検出結果の確認用
+                detected = False  # 検出結果があるか確認
                 self.canvas.itemconfig(self.message_id, text="すこしまってね")
 
                 for i, box in enumerate(results[0].boxes.xyxy):
                     confidence = results[0].boxes.conf[i]  # 信頼値を取得
                     if confidence < confidence_threshold:
-                        continue  # 信頼値がしきい値以下の場合はスキップ
+                        continue  # 信頼値が低い場合はスキップ
 
                     x1, y1, x2, y2 = map(int, box.tolist())
                     label_index = int(results[0].boxes.cls[i])  # クラスIDを取得
                     object_type = self.model.names[label_index]  # クラス名を取得
                     print(f"Detected object: {object_type} with confidence: {confidence}")
 
-                    # ブロックナンバーに対応するオブジェクトかどうかを確認
+                    # 対象オブジェクトの確認
                     if (self.blocknumber == 0 and object_type != "house") or \
-                    (self.blocknumber == 1 and object_type != "cars"):
-                        continue  # 対応しない場合はスキップ
+                            (self.blocknumber == 1 and object_type != "cars"):
+                        continue
 
-                    #ボタンの透過度を変更
-                    if (self.blocknumber == 0 and object_type == "house"):
-                        tome_home ="gray25"
-
-                    if (self.blocknumber == 1 and object_type == "car"):
-                        tome_car ="gray25"
+                    # ボタンの透過度を変更
+                    if self.blocknumber == 0 and object_type == "house":
+                        tome_home = "gray25"
+                    if self.blocknumber == 1 and object_type == "cars":
+                        tome_car = "gray25"
 
                     detected = True  # 検出成功
 
                     # 検出されたオブジェクトを切り抜き
-                    
                     cropped = Image.open(filename).crop((x1, y1, x2, y2))
 
                     # 背景を削除
@@ -261,15 +264,66 @@ class BlockGameApp:
                     with open(output_path, "wb") as output_file:
                         output_file.write(output_data)
 
-                    # 検出結果を保存
-                    self.captured_images[object_type] = output_path
+                    # トリミング後の画像パス
+                    trimmed_output_path = os.path.join(self.output_dir, f"trimmed_{object_type}_{i}.png")
+
+                    # 透過部分をトリミング
+                    if self.trim_transparent_area(output_path, trimmed_output_path):
+                        # トリミング後の画像パスを保存
+                        self.captured_images[object_type] = trimmed_output_path
+                    else:
+                        print(f"Trimming failed for {output_path}")
 
                 if detected:
                     self.draw_main_screen()
-                else:#物体は検知されているが、対象の物体がないor精度が低すぎる
+                else:
                     self.canvas.itemconfig(self.message_id, text="あとちょっと！")
-            else:#そもそも物体がない
+            else:
                 self.canvas.itemconfig(self.message_id, text="みつからないよ～")
+
+    def trim_transparent_area(self, input_path, output_path):
+        """
+        PNG画像の透過部分をトリミングし、物体ができるだけ大きくなるように画像の端に配置します。
+        
+        Args:
+            input_path (str): トリミング対象の画像パス。
+            output_path (str): トリミング後の画像を保存するパス。
+            
+        Returns:
+            bool: トリミングが成功した場合はTrue、失敗した場合はFalse。
+        """
+        try:
+            # 入力画像を開く
+            img = Image.open(input_path).convert("RGBA")
+            
+            # アルファチャンネルを使って非透過部分の範囲を取得
+            bbox = img.getbbox()
+
+            if bbox:
+                # 物体部分が画像の端に触れるように画像を拡大
+                img_cropped = img.crop(bbox)
+                
+                # 新しい画像サイズを設定（物体が画像端に触れるように）
+                img_width, img_height = img_cropped.size
+                new_img = Image.new("RGBA", (img_width, img_height), (0, 0, 0, 0))
+
+                # 物体を新しい画像内で最適に配置
+                new_img.paste(img_cropped, (0,0), img_cropped)  # 物体を画像の左上に配置
+                
+                # 保存
+                new_img.save(output_path, "PNG")
+                print(f"Trimmed and enlarged image saved: {output_path}")
+                return True
+            else:
+                print("No non-transparent pixels found in the image.")
+                return False
+
+        except Exception as e:
+            print(f"Error trimming transparent image: {e}")
+            return False
+
+
+
 
     def update_frame(self):
         if self.capture.isOpened():
