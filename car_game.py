@@ -6,7 +6,7 @@ import numpy as np
 import os
 from ultralytics import YOLO
 from rembg import remove
-#import pygame
+import pygame
 
 class BlockGameApp:
     def __init__(self, root):
