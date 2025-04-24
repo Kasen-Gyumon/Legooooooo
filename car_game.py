@@ -6,9 +6,11 @@ import numpy as np
 import os
 from ultralytics import YOLO
 from rembg import remove
-import pygame
+from Audio import Audio
 
 class BlockGameApp:
+    player = Audio()
+    
     def __init__(self, root):
         self.root = root
         self.root.title("Block Game")
