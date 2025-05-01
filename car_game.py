@@ -9,8 +9,6 @@ from rembg import remove
 from Audio import Audio
 
 class BlockGameApp:
-    player = Audio()
-    
     def __init__(self, root):
         self.root = root
         self.root.title("Block Game")
